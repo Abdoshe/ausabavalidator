@@ -26,8 +26,8 @@ def reel_sequence_number(all_lines, line_num):
         if guess.record_type(all_lines, i) != DESCRIPTIVE_RECORD:
             continue
         sequence_string = line[18:20]
-        if not all((ch in string.digits for ch in sequence_string)):
-            return 'Reel sequence number is not a valid integer, should be two digits, was {}'.format(sequence_string)
+        if not sequence_string.isdigit():
+            return 'Reel sequence number at line {} is not a valid integer, should be two digits, was {}'.format(i, sequence_string)
         this_sequence_number = int(sequence_string)
         if this_sequence_number != current_sequence_number + 1:
             return 'Reel sequence numbers out of order.  Was expecting next (at line {}) to be {}, was instead {}'\
