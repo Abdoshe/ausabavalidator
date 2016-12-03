@@ -1,4 +1,5 @@
-ausabavalidator is a validator for Australian Banker Association (ABA) files.
+ausabavalidator is a validator for Australian Banker Association (ABA) files released under the GPLv3.
+
 
 Requires Python 3 and pytest for tests.  All tests currently pass.
 
