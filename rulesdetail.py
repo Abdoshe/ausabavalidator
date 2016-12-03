@@ -1,5 +1,7 @@
 import string
 
+TRANSACTION_CODES = ('13', ) + tuple((str(i) for i in range(50, 58)))
+
 
 def record_type(all_lines, line_num):
     # character 0
@@ -45,4 +47,13 @@ def indicator(all_lines, line_num):
         return 'Indicator must be one of {}, instead was {}'.format(good_chars, indicator_)
 
 
-all_detail_rules = (record_type, bsb_number, account_number, indicator)
+def transaction_code(all_lines, line_num):
+    # character 18-19
+    line = all_lines[line_num]
+    code = line[18:20]
+    if code not in TRANSACTION_CODES:
+        return 'Transaction code must be one of {}, instead was {}'.format(TRANSACTION_CODES, code)
+    return None
+
+
+all_detail_rules = (record_type, bsb_number, account_number, indicator, transaction_code)
