@@ -3,38 +3,38 @@ from rulesdescriptive import record_type, first_blank_field, reel_sequence_numbe
 from rulesdescriptive import second_blank_field, user_name, acpa_number, description, date, last_blank_field
 
 
-def test_first_record_type_correct():
+def test_record_type_valid():
     all_lines = ('0 (remainder of string should not matter)', )
     assert record_type(all_lines, 0) is None
 
 
-def test_first_record_type_wrong_character():
+def test_record_type_invalid():
     all_lines = tuple((ch for ch in string.printable if ch != '0'))  # '0' is the right character
     for i, _ in enumerate(all_lines):
         assert record_type(all_lines, i) is not None
 
 
-def test_first_blank_field_correct():
+def test_first_blank_field_valid():
     all_lines = ('0' + ' ' * 17, )
     assert first_blank_field(all_lines, 0) is None
 
 
-def test_first_blank_field_one_short():
+def test_first_blank_field_invalid_one_short():
     all_lines = ('0' + ' ' * 16 + 'x <-- not a space', )
     assert first_blank_field(all_lines, 0) is not None
 
 
-def test_reel_sequence_number_correct_one():
+def test_reel_sequence_number_valid_one():
     all_lines = ('0' + ' ' * 17 + '01', )
     assert reel_sequence_number(all_lines, 0) is None
 
 
-def test_reel_sequence_number_correct_multiple():
+def test_reel_sequence_number_valid_multiple():
     all_lines = tuple(('0' + ' ' * 17 + '{:02d}'.format(i) for i in range(1, 100)))
     assert reel_sequence_number(all_lines, len(all_lines) - 1) is None
 
 
-def test_reel_sequence_number_wrong_one():
+def test_reel_sequence_number_invalid_one():
     for i in range(100):
         if i == 1:
             continue  # 01 is correct as the first reel sequence number
@@ -42,35 +42,35 @@ def test_reel_sequence_number_wrong_one():
         assert reel_sequence_number(all_lines, 0) is not None
 
 
-def test_reel_sequence_number_wrong_multiple():
+def test_reel_sequence_number_invalid_multiple():
     all_lines = tuple(('0' + ' ' * 17 + '{:02d}'.format(i) for i in range(1, 99)))
     all_lines += ('0' + ' ' * 17 + '04', )  # '04' should be '99'
     assert reel_sequence_number(all_lines, len(all_lines) - 1) is not None
 
 
-def test_financial_institution_correct():
+def test_financial_institution_valid():
     all_lines = tuple(('0' + ' ' * 19 + code for code in ('WBC', 'CBA', 'BQL')))
     for line_num, _ in enumerate(all_lines):
         assert financial_institution(all_lines, line_num) is None
 
 
-def test_financial_institution_wrong():
+def test_financial_institution_invalid():
     all_lines = tuple(('0' + ' ' * 19 + code for code in ('not', 'gud', '123')))
     for line_num, _ in enumerate(all_lines):
         assert financial_institution(all_lines, line_num) is not None
 
 
-def test_second_blank_field_correct():
+def test_second_blank_field_valid():
     all_lines = ('0' + ' ' * 22 + ' ' * 7, )
     assert second_blank_field(all_lines, 0) is None
 
 
-def test_second_blank_field_one_short_right():
+def test_second_blank_field_invalid_one_short_right():
     all_lines = ('0' + ' ' * 22 + ' ' * 6 + 'x <-- not a space', )
     assert second_blank_field(all_lines, 0) is not None
 
 
-def test_second_blank_field_one_short_left():
+def test_second_blank_field_invalid_one_short_left():
     all_lines = ('0' + ' ' * 22 + 'x' + ' ' * 6, )  # the 'x' should be a ' '
     assert second_blank_field(all_lines, 0) is not None
 
