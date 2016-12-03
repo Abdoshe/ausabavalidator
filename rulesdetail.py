@@ -87,5 +87,17 @@ def lodgement_reference(all_lines, line_num):
     return None
 
 
+def trace_record(all_lines, line_num):
+    # characters 80-86
+    line = all_lines[line_num]
+    trace = line[80:87]
+    if not (trace[:3].isdigit() and trace[4:].isdigit()):
+        return 'The first three and last three characters of the trace record must be digits, trace record given was: '\
+                '{}'.format(trace)
+    if not trace[3] == '-':
+        return 'The fourth character of the trace record must be -, instead was {}'.format(trace[3])
+    return None
+
+
 all_detail_rules = (record_type, bsb_number, account_number, indicator, transaction_code, amount, title,
-                    lodgement_reference)
+                    lodgement_reference, trace_record)

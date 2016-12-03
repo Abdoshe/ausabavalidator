@@ -1,7 +1,7 @@
 import string
 from rulesdetail import TRANSACTION_CODES
 from rulesdetail import record_type, bsb_number, account_number, indicator, transaction_code, amount, title
-from rulesdetail import lodgement_reference
+from rulesdetail import lodgement_reference, trace_record
 
 
 def test_record_type_valid():
@@ -156,3 +156,28 @@ def test_lodgement_reference_invalid_right_justified():
 def test_lodgement_reference_invalid_blank():
     all_lines = (' ' * 80, )
     assert lodgement_reference(all_lines, 0) is not None
+
+
+def test_trace_record_valid():
+    all_lines = (' ' * 80 + '123-456', )
+    assert trace_record(all_lines, 0) is None
+
+
+def test_trace_record_invalid_hyphen_missing():
+    all_lines = (' ' * 80 + '123456', )
+    assert trace_record(all_lines, 0) is not None
+
+
+def test_trace_record_invalid_hyphen_replaced():
+    all_lines = (' ' * 80 + '123 456', )
+    assert trace_record(all_lines, 0) is not None
+
+
+def test_trace_record_invalid_non_digit_in_first_triplet():
+    all_lines = (' ' * 80 + '1a3-456', )
+    assert trace_record(all_lines, 0) is not None
+
+
+def test_trace_record_invalid_non_digit_in_second_triplet():
+    all_lines = (' 123-45x      ', )
+    assert trace_record(all_lines, 0) is not None
