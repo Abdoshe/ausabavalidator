@@ -1,5 +1,5 @@
 import string
-from rulesdetail import record_type, bsb_number, account_number
+from rulesdetail import record_type, bsb_number, account_number, indicator
 
 
 def test_record_type_valid():
@@ -76,3 +76,17 @@ def test_account_number_invalid_bad_character():
 def test_account_number_invalid_all_zeroes():
     all_lines = (' ' * 8 + '0' * 9, )
     assert account_number(all_lines, 0) is not None
+
+
+def test_indicator_valid():
+    good_chars = ' NWXY'
+    all_lines = tuple((' ' * 17 + ch for ch in good_chars))
+    for i, _ in enumerate(all_lines):
+        assert indicator(all_lines, i) is None
+
+
+def test_indicator_invalid():
+    good_chars = ' NWXY'
+    all_lines = tuple((' ' * 17 + ch for ch in string.printable if ch not in good_chars))
+    for i, _ in enumerate(all_lines):
+        assert indicator(all_lines, i) is not None

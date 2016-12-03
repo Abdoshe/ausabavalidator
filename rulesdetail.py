@@ -36,4 +36,13 @@ def account_number(all_lines, line_num):
     return None
 
 
-all_detail_rules = (record_type, bsb_number, account_number)
+def indicator(all_lines, line_num):
+    # character 17
+    line = all_lines[line_num]
+    indicator_ = line[17]
+    good_chars = ' NWXY'
+    if not indicator_ in good_chars:
+        return 'Indicator must be one of {}, instead was {}'.format(good_chars, indicator_)
+
+
+all_detail_rules = (record_type, bsb_number, account_number, indicator)
