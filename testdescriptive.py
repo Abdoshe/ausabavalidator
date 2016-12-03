@@ -9,7 +9,7 @@ def test_first_record_type_correct():
 
 
 def test_first_record_type_wrong_character():
-    all_lines = tuple((ch for ch in string.printable if ch != '0'))
+    all_lines = tuple((ch for ch in string.printable if ch != '0'))  # '0' is the right character
     for i, _ in enumerate(all_lines):
         assert record_type(all_lines, i) is not None
 
@@ -67,11 +67,9 @@ def test_second_blank_field_correct():
 
 def test_second_blank_field_one_short_right():
     all_lines = ('0' + ' ' * 22 + ' ' * 6 + 'x <-- not a space', )
-    print(all_lines)
     assert second_blank_field(all_lines, 0) is not None
 
 
 def test_second_blank_field_one_short_left():
     all_lines = ('0' + ' ' * 22 + 'x' + ' ' * 6, )  # the 'x' should be a ' '
-    print(all_lines)
     assert second_blank_field(all_lines, 0) is not None
