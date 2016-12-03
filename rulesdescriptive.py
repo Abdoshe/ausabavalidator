@@ -73,5 +73,16 @@ def acpa_number(all_lines, line_num):
     return None
 
 
+def description(all_lines, line_num):
+    # characters 62-73
+    line = all_lines[line_num]
+    desc = line[62:74]
+    if desc.isspace():
+        return 'Characters 62-73 must not be all blank in a descriptive record'
+    if desc[0] == ' ':
+        return 'Description must be left justified but there is a space at character 62'
+    return None
+
+
 all_descriptive_rules = (record_type, first_blank_field, reel_sequence_number, financial_institution,
-                         second_blank_field, user_name, acpa_number)
+                         second_blank_field, user_name, acpa_number, description)

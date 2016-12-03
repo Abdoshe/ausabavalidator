@@ -1,6 +1,6 @@
 import string
 from rulesdescriptive import record_type, first_blank_field, reel_sequence_number, financial_institution
-from rulesdescriptive import second_blank_field, user_name, acpa_number
+from rulesdescriptive import second_blank_field, user_name, acpa_number, description
 
 
 def test_first_record_type_correct():
@@ -108,3 +108,23 @@ def test_acpa_number_invalid_space_padded():
 def test_acpa_number_invalid_non_digits():
     all_lines = (' ' * 56 + 'ABC123', )
     assert acpa_number(all_lines, 0) is not None
+
+
+def test_description_valid_filled():
+    all_lines = (' ' * 62 + 'PAYROLLXXXXX', )
+    assert description(all_lines, 0) is None
+
+
+def test_description_valid_left_justified():
+    all_lines = (' ' * 62 + 'PAYROLL     ', )
+    assert description(all_lines, 0) is None
+
+
+def test_description_invalid_all_blank():
+    all_lines = (' ' * 74, )
+    assert description(all_lines, 0) is not None
+
+
+def test_description_invalid_not_left_justified():
+    all_lines = (' ' * 62 + '     PAYROLL', )
+    assert description(all_lines, 0) is not None
