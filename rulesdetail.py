@@ -56,4 +56,13 @@ def transaction_code(all_lines, line_num):
     return None
 
 
-all_detail_rules = (record_type, bsb_number, account_number, indicator, transaction_code)
+def amount(all_lines, line_num):
+    # character 20-29
+    line = all_lines[line_num]
+    amount_ = line[20:30]
+    if not amount_.isdigit():
+        return 'Amount must be all digits, instead was {}'.format(amount_)
+    return None
+
+
+all_detail_rules = (record_type, bsb_number, account_number, indicator, transaction_code, amount)
