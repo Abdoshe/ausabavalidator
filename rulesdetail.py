@@ -76,4 +76,16 @@ def title(all_lines, line_num):
     return None
 
 
-all_detail_rules = (record_type, bsb_number, account_number, indicator, transaction_code, amount, title)
+def lodgement_reference(all_lines, line_num):
+    # characters 62-79
+    line = all_lines[line_num]
+    reference = line[62:80]
+    if reference.isspace():
+        return 'Lodgement reference cannot be blank'
+    if reference[0] == ' ':
+        return 'Lodgement reference must be left-justified'
+    return None
+
+
+all_detail_rules = (record_type, bsb_number, account_number, indicator, transaction_code, amount, title,
+                    lodgement_reference)

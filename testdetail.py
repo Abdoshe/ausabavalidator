@@ -1,6 +1,7 @@
 import string
 from rulesdetail import TRANSACTION_CODES
 from rulesdetail import record_type, bsb_number, account_number, indicator, transaction_code, amount, title
+from rulesdetail import lodgement_reference
 
 
 def test_record_type_valid():
@@ -135,3 +136,23 @@ def test_title_invalid_right_justified():
 def test_title_invalid_blank():
     all_lines = (' ' * 62, )
     assert title(all_lines, 0) is not None
+
+
+def test_lodgement_reference_valid_full():
+    all_lines = (' ' * 62 + 'x' * 18, )
+    assert lodgement_reference(all_lines, 0) is None
+
+
+def test_lodgement_reference_valid_left_justified():
+    all_lines = (' ' * 60 + 'x' * 14 + ' ' * 4, )
+    assert lodgement_reference(all_lines, 0) is None
+
+
+def test_lodgement_reference_invalid_right_justified():
+    all_lines = (' ' * 60 + ' ' * 4 + 'x' * 14, )
+    assert lodgement_reference(all_lines, 0) is not None
+
+
+def test_lodgement_reference_invalid_blank():
+    all_lines = (' ' * 80, )
+    assert lodgement_reference(all_lines, 0) is not None
