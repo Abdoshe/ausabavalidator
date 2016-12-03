@@ -44,6 +44,8 @@ def get_all_errors(all_lines):
 
 
 def main():
+    print("******** Warning: we're not checking for bad characters, a Valid response does not mean the file will "\
+          "definitely be accepted by a particular financial institution********")
     errors = get_all_errors(read_file('sample.aba'))
     if not errors:
         print('Valid')
