@@ -1,8 +1,9 @@
+from itertools import chain
 import guess
 from rulesgeneric import all_generic_rules
 from rulesdescriptive import all_descriptive_rules
+from rulesdetail import all_detail_rules
 from record import DESCRIPTIVE_RECORD, DETAIL_RECORD, TOTAL_RECORD
-from itertools import chain
 
 
 def nones_removed(seq):
@@ -32,8 +33,11 @@ def get_all_errors(all_lines):
     error_dict = {}
     for line_num, line in enumerate(all_lines):
         errors = get_ruleset_errors(all_lines, line_num, all_generic_rules)
-        if guess.record_type(all_lines, line_num) == DESCRIPTIVE_RECORD:
-            errors += get_ruleset_errors(all_lines, line_num, all_descriptive_rules)
+        record_type = guess.record_type(all_lines, line_num)
+        ruleset = {DESCRIPTIVE_RECORD: all_descriptive_rules,
+                   DETAIL_RECORD: all_detail_rules,
+                   TOTAL_RECORD: ()}[record_type]
+        errors += get_ruleset_errors(all_lines, line_num, ruleset)
         error_dict[line_num] = errors
     remove_empties_from_dict(error_dict)
     return error_dict
