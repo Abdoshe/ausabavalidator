@@ -1,6 +1,6 @@
 import string
 from rulesdescriptive import record_type, first_blank_field, reel_sequence_number, financial_institution
-from rulesdescriptive import second_blank_field
+from rulesdescriptive import second_blank_field, user_name
 
 
 def test_first_record_type_correct():
@@ -73,3 +73,23 @@ def test_second_blank_field_one_short_right():
 def test_second_blank_field_one_short_left():
     all_lines = ('0' + ' ' * 22 + 'x' + ' ' * 6, )  # the 'x' should be a ' '
     assert second_blank_field(all_lines, 0) is not None
+
+
+def test_user_name_valid_filled():
+    all_lines = (' ' * 30 + 'COMPANYNAMEHEREXXXXXXXXXXX', )
+    assert user_name(all_lines, 0) is None
+
+
+def test_user_name_valid_left_justified():
+    all_lines = (' ' * 30 + 'COMPANYNAMEHERE           ', )
+    assert user_name(all_lines, 0) is None
+
+
+def test_user_name_invalid_all_blank():
+    all_lines = (' ' * 60, )
+    assert user_name(all_lines, 0) is not None
+
+
+def test_user_name_invalid_not_left_justified():
+    all_lines = (' ' * 50 + 'name  ', )
+    assert user_name(all_lines, 0) is not None

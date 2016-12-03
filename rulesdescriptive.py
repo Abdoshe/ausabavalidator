@@ -53,5 +53,17 @@ def second_blank_field(all_lines, line_num):
     return None
 
 
+def user_name(all_lines, line_num):
+    # characters 30-55
+    line = all_lines[line_num]
+    name = line[30:56]
+    if name.isspace():
+        return 'Characters 30-55 must not be all blank in a descriptive record'
+    if name[0] == ' ':
+        return 'User name must be left justified but there is a space at character 30'
+    # Remaining specification depends on the financial institution so not much more we can do here
+    return None
+
+
 all_descriptive_rules = (record_type, first_blank_field, reel_sequence_number, financial_institution,
-                         second_blank_field)
+                         second_blank_field, user_name)
