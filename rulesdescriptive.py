@@ -1,3 +1,4 @@
+from datetime import datetime
 import guess
 from record import DESCRIPTIVE_RECORD
 
@@ -84,5 +85,19 @@ def description(all_lines, line_num):
     return None
 
 
+def date(all_lines, line_num):
+    # characters 74-79
+    line = all_lines[line_num]
+    date_string = line[74:80]
+    bad_format_error = 'Characters 74-79 must be a date in the format DDMMYY, instead were {}'.format(date_string)
+    if not date_string.isdigit():
+        return bad_format_error
+    try:
+        datetime.strptime(date_string, '%d%m%y')
+    except ValueError as err:
+        return bad_format_error
+    return None
+
+
 all_descriptive_rules = (record_type, first_blank_field, reel_sequence_number, financial_institution,
-                         second_blank_field, user_name, acpa_number, description)
+                         second_blank_field, user_name, acpa_number, description, date)

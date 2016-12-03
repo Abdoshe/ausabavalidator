@@ -1,6 +1,6 @@
 import string
 from rulesdescriptive import record_type, first_blank_field, reel_sequence_number, financial_institution
-from rulesdescriptive import second_blank_field, user_name, acpa_number, description
+from rulesdescriptive import second_blank_field, user_name, acpa_number, description, date
 
 
 def test_first_record_type_correct():
@@ -128,3 +128,18 @@ def test_description_invalid_all_blank():
 def test_description_invalid_not_left_justified():
     all_lines = (' ' * 62 + '     PAYROLL', )
     assert description(all_lines, 0) is not None
+
+
+def test_date_valid():
+    all_lines = (' ' * 74 + '010116', )
+    assert date(all_lines, 0) is None
+
+
+def test_date_invalid_bad_date():
+    all_lines = (' ' * 74 + '400116', )
+    assert date(all_lines, 0) is not None
+
+
+def test_date_invalid_wrong_format():
+    all_lines = (' ' * 74 + '01-01-16', )
+    assert date(all_lines, 0) is not None
