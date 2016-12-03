@@ -1,5 +1,5 @@
 import string
-from rulesdetail import record_type, bsb_number
+from rulesdetail import record_type, bsb_number, account_number
 
 
 def test_record_type_valid():
@@ -36,3 +36,43 @@ def test_bsb_number_invalid_non_digit_in_first_triplet():
 def test_bsb_number_invalid_non_digit_in_second_triplet():
     all_lines = (' 123-45x      ', )
     assert bsb_number(all_lines, 0) is not None
+
+
+def test_account_number_valid_eight_digits_no_hyphen():
+    all_lines = (' ' * 8 + ' 12345678', )
+    assert account_number(all_lines, 0) is None
+
+
+def test_account_number_valid_eight_digits_with_hyphen():
+    all_lines = (' ' * 8 + '1234-5678', )
+    assert account_number(all_lines, 0) is None
+
+
+def test_account_number_valid_nine_digits():
+    all_lines = (' ' * 8 + '123456789', )
+    assert account_number(all_lines, 0) is None
+
+
+def test_account_number_valid_blank():
+    all_lines = (' ' * 8 + ' ' * 9, )  # for credit card transactions the account number can be blank
+    assert account_number(all_lines, 0) is None
+
+
+def test_account_number_valid_employee_benefits_card():
+    all_lines = (' ' * 8 + '   999999', )  # for employee benefits card transactions, account number must be '999999'
+    assert account_number(all_lines, 0) is None
+
+
+def test_account_number_invalid_left_justified():
+    all_lines = (' ' * 8 + '123456   ', )
+    assert account_number(all_lines, 0) is not None
+
+
+def test_account_number_invalid_bad_character():
+    all_lines = (' ' * 8 + '   x23456', )
+    assert account_number(all_lines, 0) is not None
+
+
+def test_account_number_invalid_all_zeroes():
+    all_lines = (' ' * 8 + '0' * 9, )
+    assert account_number(all_lines, 0) is not None
