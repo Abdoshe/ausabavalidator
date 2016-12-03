@@ -1,5 +1,5 @@
 import string
-from rulesdescriptive import record_type, first_blank_field, reel_sequence_number
+from rulesdescriptive import record_type, first_blank_field, reel_sequence_number, financial_institution
 
 
 def test_first_record_type_correct():
@@ -45,3 +45,15 @@ def test_reel_sequence_number_wrong_multiple():
     all_lines = tuple(('0' + ' ' * 17 + '{:02d}'.format(i) for i in range(1, 99)))
     all_lines += ('0' + ' ' * 17 + '04', )  # '04' should be '99'
     assert reel_sequence_number(all_lines, len(all_lines) - 1) is not None
+
+
+def test_financial_institution_correct():
+    all_lines = tuple(('0' + ' ' * 19 + code for code in ('WBC', 'CBA', 'BQL')))
+    for line_num, _ in enumerate(all_lines):
+        assert financial_institution(all_lines, line_num) is None
+
+
+def test_financial_institution_wrong():
+    all_lines = tuple(('0' + ' ' * 19 + code for code in ('not', 'gud', '123')))
+    for line_num, _ in enumerate(all_lines):
+        assert financial_institution(all_lines, line_num) is not None
