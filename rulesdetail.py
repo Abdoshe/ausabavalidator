@@ -48,7 +48,7 @@ def indicator(all_lines, line_num):
 
 
 def transaction_code(all_lines, line_num):
-    # character 18-19
+    # characters 18-19
     line = all_lines[line_num]
     code = line[18:20]
     if code not in TRANSACTION_CODES:
@@ -57,7 +57,7 @@ def transaction_code(all_lines, line_num):
 
 
 def amount(all_lines, line_num):
-    # character 20-29
+    # characters 20-29
     line = all_lines[line_num]
     amount_ = line[20:30]
     if not amount_.isdigit():
@@ -65,4 +65,15 @@ def amount(all_lines, line_num):
     return None
 
 
-all_detail_rules = (record_type, bsb_number, account_number, indicator, transaction_code, amount)
+def title(all_lines, line_num):
+    # characters 30-61
+    line = all_lines[line_num]
+    title_ = line[30:62]
+    if title_.isspace():
+        return 'Account title must not be blank'
+    if title_[0] == ' ':
+        return 'Account title must be left-justified'
+    return None
+
+
+all_detail_rules = (record_type, bsb_number, account_number, indicator, transaction_code, amount, title)

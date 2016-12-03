@@ -1,6 +1,6 @@
 import string
 from rulesdetail import TRANSACTION_CODES
-from rulesdetail import record_type, bsb_number, account_number, indicator, transaction_code, amount
+from rulesdetail import record_type, bsb_number, account_number, indicator, transaction_code, amount, title
 
 
 def test_record_type_valid():
@@ -115,3 +115,23 @@ def test_amount_invalid():
     all_lines = tuple((' ' * 20 + amount_ for amount_ in ('not an amount', 'blah blah ' '          ')))
     for i, _ in enumerate(all_lines):
         assert amount(all_lines, i) is not None
+
+
+def test_title_valid_full():
+    all_lines = (' ' * 30 + 'x' * 32, )
+    assert title(all_lines, 0) is None
+
+
+def test_title_valid_left_justified():
+    all_lines = (' ' * 30 + 'x' * 27 + ' ' * 5, )
+    assert title(all_lines, 0) is None
+
+
+def test_title_invalid_right_justified():
+    all_lines = (' ' * 30 + ' ' * 5 + 'x' * 27, )
+    assert title(all_lines, 0) is not None
+
+
+def test_title_invalid_blank():
+    all_lines = (' ' * 62, )
+    assert title(all_lines, 0) is not None
