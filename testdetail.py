@@ -1,7 +1,8 @@
 import string
 from rulesdetail import TRANSACTION_CODES
 from rulesdetail import record_type, bsb_number, account_number, indicator, transaction_code, amount, title
-from rulesdetail import lodgement_reference, trace_record
+from rulesdetail import lodgement_reference, trace_record_bsb, trace_record_account_number, remitter_name
+from rulesdetail import withholding_tax
 
 
 def test_record_type_valid():
@@ -158,26 +159,96 @@ def test_lodgement_reference_invalid_blank():
     assert lodgement_reference(all_lines, 0) is not None
 
 
-def test_trace_record_valid():
+def test_trace_record_bsb_valid():
     all_lines = (' ' * 80 + '123-456', )
-    assert trace_record(all_lines, 0) is None
+    assert trace_record_bsb(all_lines, 0) is None
 
 
-def test_trace_record_invalid_hyphen_missing():
+def test_trace_record_bsb_invalid_hyphen_missing():
     all_lines = (' ' * 80 + '123456', )
-    assert trace_record(all_lines, 0) is not None
+    assert trace_record_bsb(all_lines, 0) is not None
 
 
-def test_trace_record_invalid_hyphen_replaced():
+def test_trace_record_bsb_invalid_hyphen_replaced():
     all_lines = (' ' * 80 + '123 456', )
-    assert trace_record(all_lines, 0) is not None
+    assert trace_record_bsb(all_lines, 0) is not None
 
 
-def test_trace_record_invalid_non_digit_in_first_triplet():
+def test_trace_record_bsb_invalid_non_digit_in_first_triplet():
     all_lines = (' ' * 80 + '1a3-456', )
-    assert trace_record(all_lines, 0) is not None
+    assert trace_record_bsb(all_lines, 0) is not None
 
 
-def test_trace_record_invalid_non_digit_in_second_triplet():
+def test_trace_record_bsb_invalid_non_digit_in_second_triplet():
     all_lines = (' 123-45x      ', )
-    assert trace_record(all_lines, 0) is not None
+    assert trace_record_bsb(all_lines, 0) is not None
+
+
+def test_trace_record_account_number_valid_eight_digits_no_hyphen():
+    all_lines = (' ' * 87 + ' 12345678', )
+    assert trace_record_account_number(all_lines, 0) is None
+
+
+def test_trace_record_account_number_valid_eight_digits_with_hyphen():
+    all_lines = (' ' * 87 + '1234-5678', )
+    assert trace_record_account_number(all_lines, 0) is None
+
+
+def test_trace_record_account_number_valid_nine_digits():
+    all_lines = (' ' * 87 + '123456789', )
+    assert trace_record_account_number(all_lines, 0) is None
+
+
+def test_trace_record_account_number_valid_blank():
+    all_lines = (' ' * 87 + ' ' * 9, )  # for credit card transactions the account number can be blank
+    assert trace_record_account_number(all_lines, 0) is None
+
+
+def test_trace_record_account_number_valid_employee_benefits_card():
+    all_lines = (' ' * 87 + '   999999', )  # for employee benefits card transactions, account number must be '999999'
+    assert trace_record_account_number(all_lines, 0) is None
+
+
+def test_trace_record_account_number_invalid_left_justified():
+    all_lines = (' ' * 87 + '123456   ', )
+    assert trace_record_account_number(all_lines, 0) is not None
+
+
+def test_trace_record_account_number_invalid_bad_character():
+    all_lines = (' ' * 87 + '   x23456', )
+    assert trace_record_account_number(all_lines, 0) is not None
+
+
+def test_trace_record_account_number_invalid_all_zeroes():
+    all_lines = (' ' * 87 + '0' * 9, )
+    assert trace_record_account_number(all_lines, 0) is not None
+
+
+def test_remitter_name_valid():
+    all_lines = (' ' * 96 + 'X' * 16, )
+    assert remitter_name(all_lines, 0) is None
+
+
+def test_remitter_name_invalid_blank():
+    all_lines = (' ' * 96 + ' ' * 16, )
+    assert remitter_name(all_lines, 0) is not None
+
+
+def test_remitter_name_invalid_right_justified():
+    all_lines = (' ' * 96 + ' ' * 15 + 'X', )
+    assert remitter_name(all_lines, 0) is not None
+
+
+def test_withholding_tax_valid_zero():
+    all_lines = (' ' * 112 + '0' * 8, )
+    assert withholding_tax(all_lines, 0) is None
+
+
+def test_withholding_tax_valid_non_zero():
+    all_lines = (' ' * 112 + '12345678', )
+    assert withholding_tax(all_lines, 0) is None
+
+
+def test_withholding_tax_invalid():
+    all_lines = (' ' * 112 + '1234567X', )
+    assert withholding_tax(all_lines, 0) is not None

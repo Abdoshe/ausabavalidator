@@ -87,7 +87,7 @@ def lodgement_reference(all_lines, line_num):
     return None
 
 
-def trace_record(all_lines, line_num):
+def trace_record_bsb(all_lines, line_num):
     # characters 80-86
     line = all_lines[line_num]
     trace = line[80:87]
@@ -99,5 +99,40 @@ def trace_record(all_lines, line_num):
     return None
 
 
+def trace_record_account_number(all_lines, line_num):
+    # characters 87-95
+    line = all_lines[line_num]
+    account = line[87:96]
+    good_chars = string.digits + ' -'
+    if not all((ch in good_chars for ch in account)):
+        return 'Account number can only contain digits, hyphens, and spaces, instead was {}'.format(account)
+    if not account.isspace() and account[-1] == ' ':
+        return 'If not completely blank, account number must be right-justified and padded with spaces, ' \
+               'instead was: {}'.format(account)
+    if all((ch == '0' for ch in account)):
+        return 'Account number can not be all zeroes'
+    return None
+
+
+def remitter_name(all_lines, line_num):
+    # characters 96-111
+    line = all_lines[line_num]
+    name = line[96:112]
+    if name.isspace():
+        return 'Remitter name cannot be blank'
+    if name[0] == ' ':
+        return 'Remitter name must be left justified'
+    return None
+
+
+def withholding_tax(all_lines, line_num):
+    # characters 112-119
+    line = all_lines[line_num]
+    tax = line[112:120]
+    if not tax.isdigit():
+        return 'Withholding tax must be all digits, instead was {}'.format(tax)
+    return None
+
+
 all_detail_rules = (record_type, bsb_number, account_number, indicator, transaction_code, amount, title,
-                    lodgement_reference, trace_record)
+                    lodgement_reference, trace_record_bsb, trace_record_account_number, remitter_name, withholding_tax)
