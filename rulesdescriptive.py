@@ -1,6 +1,5 @@
 import guess
 from record import DESCRIPTIVE_RECORD
-import string
 
 
 def record_type(all_lines, line_num):
