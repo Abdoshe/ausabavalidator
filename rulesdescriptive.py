@@ -33,6 +33,7 @@ def reel_sequence_number(all_lines, line_num):
             return 'Reel sequence numbers out of order.  Was expecting next (at line {}) to be {}, was instead {}'\
                 .format(i, current_sequence_number + 1, this_sequence_number)
         current_sequence_number = this_sequence_number
+    return None
 
 
 def financial_institution(all_lines, line_num):
@@ -41,6 +42,7 @@ def financial_institution(all_lines, line_num):
     institution = line[20:23]
     if institution not in ('WBC', 'CBA', 'BQL'):
         return 'Invalid financial institution: {} (probably a false positive, yet to add most banks'.format(institution)
+    return None
 
 
 all_descriptive_rules = (record_type, first_blank_field, reel_sequence_number, financial_institution)
