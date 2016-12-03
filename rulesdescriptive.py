@@ -64,5 +64,14 @@ def user_name(all_lines, line_num):
     return None
 
 
+def acpa_number(all_lines, line_num):
+    # characters 56-61
+    line = all_lines[line_num]
+    number = line[56:62]
+    if not number.isdigit():
+        return 'Characters 56-61 must contain an ACPA identification number, instead got {}'.format(number)
+    return None
+
+
 all_descriptive_rules = (record_type, first_blank_field, reel_sequence_number, financial_institution,
-                         second_blank_field, user_name)
+                         second_blank_field, user_name, acpa_number)
