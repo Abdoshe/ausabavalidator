@@ -45,4 +45,13 @@ def financial_institution(all_lines, line_num):
     return None
 
 
-all_descriptive_rules = (record_type, first_blank_field, reel_sequence_number, financial_institution)
+def second_blank_field(all_lines, line_num):
+    # characters 23-29
+    line = all_lines[line_num]
+    if line[23:30] != ' ' * 7:
+        return 'Characters 23-29 must be blank in a descriptive record'
+    return None
+
+
+all_descriptive_rules = (record_type, first_blank_field, reel_sequence_number, financial_institution,
+                         second_blank_field)

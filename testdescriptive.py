@@ -1,5 +1,6 @@
 import string
 from rulesdescriptive import record_type, first_blank_field, reel_sequence_number, financial_institution
+from rulesdescriptive import second_blank_field
 
 
 def test_first_record_type_correct():
@@ -57,3 +58,20 @@ def test_financial_institution_wrong():
     all_lines = tuple(('0' + ' ' * 19 + code for code in ('not', 'gud', '123')))
     for line_num, _ in enumerate(all_lines):
         assert financial_institution(all_lines, line_num) is not None
+
+
+def test_second_blank_field_correct():
+    all_lines = ('0' + ' ' * 22 + ' ' * 7, )
+    assert second_blank_field(all_lines, 0) is None
+
+
+def test_second_blank_field_one_short_right():
+    all_lines = ('0' + ' ' * 22 + ' ' * 6 + 'x <-- not a space', )
+    print(all_lines)
+    assert second_blank_field(all_lines, 0) is not None
+
+
+def test_second_blank_field_one_short_left():
+    all_lines = ('0' + ' ' * 22 + 'x' + ' ' * 6, )  # the 'x' should be a ' '
+    print(all_lines)
+    assert second_blank_field(all_lines, 0) is not None
