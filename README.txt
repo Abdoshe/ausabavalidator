@@ -1,7 +1,7 @@
 ausabavalidator is a validator for Australian Banker Association (ABA) files released under the GPLv3.
 
 
-Requires Python 3 and pytest for tests.  All tests currently pass.
+Requires Python 3 and pytest for tests.  No tests exist in this branch, they'll be added before merging back to master.
 
 At this point the ABA filename is hardcoded in validator.py, this will change.
 
