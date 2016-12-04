@@ -54,6 +54,20 @@ class Blank(StringValidator):
         return ()
 
 
+class Characters(StringValidator):
+    """Check the string only contains characters in chars."""
+    def __init__(self, string, chars):
+        super().__init__(string)
+        self.chars = chars
+
+    @property
+    def errors(self):
+        if not all((ch in self.chars for ch in self.string)):
+            return ("Expected a string only containing these characters: '{}' but got '{}'"\
+                .format(self.chars, self.string), )
+        return ()
+
+
 class Literals(StringValidator):
     """Check the given string is in literals."""
     def __init__(self, string, literals):
@@ -67,6 +81,19 @@ class Literals(StringValidator):
                     .format(literals=pluralise(self.literals, "'{}'".format(self.literals[0]),
                                                'one of {}'.format(self.literals)),
                             string=self.string), )
+        return ()
+
+
+class NotLiterals(StringValidator):
+    """Check the give string is not in literals."""
+    def __init__(self, string, literals):
+        super().__init__(string)
+        self.literals = literals
+
+    @property
+    def errors(self):
+        if self.string in self.literals:
+            return ("Forbidden string {}'".format(self.string), )
         return ()
 
 
@@ -92,6 +119,16 @@ class Integer(StringValidator):
         if not self.string.isdigit():
             return ("Expected all digits but got '{}'".format(self.string), )
         return ()
+
+
+class IntegerNonZero(StringValidator):
+    """Check that string does not evaluate to 0."""
+    @property
+    def errors(self):
+        if int(self.string) <= 0:
+            return ("Expected non-zero integer but got '{}'".format(self.string), )
+        return ()
+    
 
 
 class Date(StringValidator):

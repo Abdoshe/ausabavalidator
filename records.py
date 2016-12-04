@@ -1,6 +1,7 @@
 from collections import OrderedDict
 from component import Component
-from fields import FieldSpec, Field, BlankField, JustifiedField, IntegerField, DateField, BSBField
+from fields import FieldSpec, Field, BlankField, LiteralsField, JustifiedField, IntegerField, DateField, BSBField
+from fields import AccountField, AmountField
 from validators import Validator, Length, NotBlank, Integer, Literals
 
 
@@ -60,7 +61,17 @@ class DescriptiveRecord(Record):
 class DetailRecord(Record):
     def __init__(self, line):
         field_specs = (FieldSpec('record type', (0, 1), IntegerField, ()),
-                       FieldSpec('bsb number', (1, 8), BSBField, ()))
+                       FieldSpec('bsb number', (1, 8), BSBField, ()),
+                       FieldSpec('account number', (8, 17), AccountField, ()),
+                       FieldSpec('indicator', (17, 18), LiteralsField, (), (' ', 'N', 'W', 'X', 'Y')),
+                       FieldSpec('transaction code', (18, 20), LiteralsField, (),
+                                 (('13', ) + tuple((str(i) for i in range(50, 58))))),
+                       FieldSpec('amount', (20, 30), AmountField, ()))
+        for spec in field_specs:
+            start, end = spec.bounds
+            substring = line[start:end]
+            spec.validators += (Length(substring, end - start), )
+
         super().__init__(line, field_specs, validators=None)
 
 

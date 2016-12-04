@@ -1,5 +1,6 @@
+from string import digits
 from component import Component
-from validators import Blank, JustifiedString, Integer, Date, BSB
+from validators import Blank, JustifiedString, Integer, Date, BSB, Literals, NotLiterals, Characters, IntegerNonZero
 
 
 class Field(Component):
@@ -12,6 +13,13 @@ class BlankField(Field):
     def __init__(self, string, validators=None):
         super().__init__(string, validators=validators)
         self.validators += (Blank(string),)
+
+
+class LiteralsField(Field):
+    def __init__(self, string, literals, validators=None):
+        super().__init__(string, validators=validators)
+        self.literals = literals
+        self.validators += (Literals(string, literals),)
 
 
 class JustifiedField(Field):
@@ -39,8 +47,21 @@ class BSBField(Field):
         self.validators += (BSB(string), )
 
 
+class AccountField(Field):
+    def __init__(self, string, validators=None):
+        super().__init__(string, validators=validators)
+        self.validators += (NotLiterals(string, '0' * len(string)),
+                            Characters(string, digits + '- '))
+
+
+class AmountField(Field):
+    def __init__(self, string, validators=None):
+        super().__init__(string, validators=validators)
+        self.validators += (IntegerNonZero(string), )
+
+
 class FieldSpec:
-    def __init__(self, name, bounds, class_, validators):
+    def __init__(self, name, bounds, class_, validators, *args):
         """
         Holds the info needed to create a specific field.
 
@@ -53,6 +74,7 @@ class FieldSpec:
         self.bounds = bounds
         self.class_ = class_
         self.validators = validators
+        self.args = args
 
     @property
     def display_bounds(self):
@@ -61,4 +83,6 @@ class FieldSpec:
 
     def field(self, string):
         """Create a field from this FieldSpec containing the given string."""
+        if self.args:
+            return self.class_(string, *self.args, validators=self.validators)
         return self.class_(string, validators=self.validators)
