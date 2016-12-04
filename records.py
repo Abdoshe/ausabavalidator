@@ -37,6 +37,7 @@ class DescriptiveRecord(Record):
     def __init__(self, line):
         field_specs = (FieldSpec('record type', (0, 1), IntegerField, ()),
                        FieldSpec('first blank field', (1, 18), BlankField, ()),
+                       FieldSpec('reel sequence', (18, 20), IntegerField, ()),
                        FieldSpec('second blank field', (23, 30), BlankField, ()),
                        FieldSpec('APCA number', (56, 62), IntegerField, ()),
                        FieldSpec('date', (74, 80), DateField, ()),
