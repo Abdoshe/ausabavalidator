@@ -36,6 +36,15 @@ class Length(StringValidator):
         return ()
 
 
+class NotBlank(StringValidator):
+    """Check the given string does not consist only of spaces"""
+    @property
+    def errors(self):
+        if all((ch == ' ' for ch in self.string)):
+            return ("Expected non-blank field but got all spaces", )
+        return ()
+
+
 class Blank(StringValidator):
     """Check the given string consists only of spaces."""
     @property
@@ -58,6 +67,21 @@ class Literals(StringValidator):
                     .format(literals=pluralise(self.literals, "'{}'".format(self.literals[0]),
                                                'one of {}'.format(self.literals)),
                             string=self.string), )
+        return ()
+
+
+class JustifiedString(StringValidator):
+    """Check that a string is correctly justified either right or left."""
+    def __init__(self, string, left_justified):
+        super().__init__(string)
+        self.left_justified = left_justified
+
+    @property
+    def errors(self):
+        if self.left_justified and self.string[0] == ' ':
+            return ("Expected left-justified string but got a space at the start: '{}'".format(self.string), )
+        elif not self.left_justified and self.string[-1] == ' ':
+            return ("Expected right-justified string but got a space at the end: '{}'".format(self.string), )
         return ()
 
 

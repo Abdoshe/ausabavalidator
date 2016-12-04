@@ -1,8 +1,7 @@
 from collections import OrderedDict
 from component import Component
-from fields import FieldSpec
-from fields import BlankField, IntegerField, DateField
-from validators import Validator, Length, Integer, Literals
+from fields import FieldSpec, Field, BlankField, JustifiedField, IntegerField, DateField
+from validators import Validator, Length, NotBlank, Integer, Literals
 
 
 class FieldsValidator(Validator):
@@ -38,8 +37,11 @@ class DescriptiveRecord(Record):
         field_specs = (FieldSpec('record type', (0, 1), IntegerField, ()),
                        FieldSpec('first blank field', (1, 18), BlankField, ()),
                        FieldSpec('reel sequence', (18, 20), IntegerField, ()),
+                       FieldSpec('financial institution', (20, 23), Field, ()),
                        FieldSpec('second blank field', (23, 30), BlankField, ()),
+                       FieldSpec('user name', (30, 56), JustifiedField, ()),
                        FieldSpec('APCA number', (56, 62), IntegerField, ()),
+                       FieldSpec('description', (62, 74), JustifiedField, ()),
                        FieldSpec('date', (74, 80), DateField, ()),
                        FieldSpec('third blank field', (80, 120), BlankField, ()))
 
@@ -48,6 +50,9 @@ class DescriptiveRecord(Record):
             start, end = spec.bounds
             substring = line[start:end]
             spec.validators += (Length(substring, end - start), )
+
+            if spec.name in ('user name', 'description'):
+                spec.validators += (NotBlank(substring), )
 
         super().__init__(line, field_specs, validators=None)
 

@@ -1,5 +1,5 @@
 from component import Component
-from validators import Blank, Integer, Date
+from validators import Blank, JustifiedString, Integer, Date
 
 
 class Field(Component):
@@ -12,6 +12,13 @@ class BlankField(Field):
     def __init__(self, string, validators=None):
         super().__init__(string, validators=validators)
         self.validators += (Blank(string),)
+
+
+class JustifiedField(Field):
+    def __init__(self, string, left_justified=True, validators=None):
+        super().__init__(string, validators=validators)
+        self.left_justified = left_justified
+        self.validators += (JustifiedString(string, left_justified), )
 
 
 class IntegerField(Field):
