@@ -103,3 +103,16 @@ class Date(StringValidator):
         except ValueError as err:
             return ("Expected a date in the format 'DDMMYY' but got '{}'".format(self.string), )
         return ()
+
+
+class BSB(StringValidator):
+    """Check the string confirms to 'xxx-xxx' where every x is a digit."""
+    @property
+    def errors(self):
+        errs = []
+        if self.string[3] != '-':
+            errs.append("Expected a hyphen in the middle of the BSB number, instead got '{}'".format(self.string[3]))
+        if not (self.string[:3] + self.string[4:]).isdigit():
+            errs.append("Expected digits in the first and last three characters for the BSB number, instead got '{}'"
+                        .format(self.string))
+        return tuple(errs)

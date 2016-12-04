@@ -1,6 +1,6 @@
 from collections import OrderedDict
 from component import Component
-from fields import FieldSpec, Field, BlankField, JustifiedField, IntegerField, DateField
+from fields import FieldSpec, Field, BlankField, JustifiedField, IntegerField, DateField, BSBField
 from validators import Validator, Length, NotBlank, Integer, Literals
 
 
@@ -59,7 +59,8 @@ class DescriptiveRecord(Record):
 
 class DetailRecord(Record):
     def __init__(self, line):
-        field_specs = ()
+        field_specs = (FieldSpec('record type', (0, 1), IntegerField, ()),
+                       FieldSpec('bsb number', (1, 8), BSBField, ()))
         super().__init__(line, field_specs, validators=None)
 
 
