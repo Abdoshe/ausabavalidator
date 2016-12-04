@@ -10,15 +10,6 @@ def nones_removed(seq):
     return (item for item in seq if item is not None)
 
 
-def remove_empties_from_dict(dct):
-    empty_keys = []
-    for key, value in dct.items():
-        if not value:
-            empty_keys.append(key)
-    for key in empty_keys:
-        del dct[key]
-
-
 def read_file(filename):
     with open(filename) as f:
         string_all_lines = f.readlines()
@@ -38,8 +29,8 @@ def get_all_errors(all_lines):
                    DETAIL_RECORD: all_detail_rules,
                    TOTAL_RECORD: ()}[record_type]
         errors += get_ruleset_errors(all_lines, line_num, ruleset)
-        error_dict[line_num] = errors
-    remove_empties_from_dict(error_dict)
+        if errors:
+            error_dict[line_num] = errors
     return error_dict
 
 
