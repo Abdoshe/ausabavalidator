@@ -70,12 +70,14 @@ class DetailRecord(Record):
                        FieldSpec('account name', (30, 62), JustifiedField, ()),
                        FieldSpec('lodgement reference', (62, 80), JustifiedField, ()),
                        FieldSpec('trace bsb number', (80, 87), BSBField, ()),
-                       FieldSpec('trace account number', (87, 96), AccountNumberField, ()))
+                       FieldSpec('trace account number', (87, 96), AccountNumberField, ()),
+                       FieldSpec('remitter name', (96, 112), JustifiedField, ()),
+                       FieldSpec('withholding tax', (112, 120), IntegerField, ()))
         for spec in field_specs:
             start, end = spec.bounds
             substring = line[start:end]
             spec.validators += (Length(substring, end - start), )
-            if spec.name in ('account name', 'lodgement reference'):
+            if spec.name in ('account name', 'lodgement reference', 'remitter name'):
                 # TODO: can lodgement reference be blank?  Need to double-check
                 spec.validators += (NotBlank(substring), )
 
