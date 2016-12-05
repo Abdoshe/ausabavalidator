@@ -86,7 +86,11 @@ class DetailRecord(Record):
 
 class TotalRecord(Record):
     def __init__(self, line):
-        field_specs = ()
+        field_specs = (FieldSpec('record type', (0, 1), IntegerField, ()),
+                       FieldSpec('bsb filler', (1, 8), LiteralsField, (), ('999-999', )),
+                       FieldSpec('first blank field', (8, 20), BlankField, ()),
+                       FieldSpec('second blank field', (50, 74), BlankField, ()),
+                       FieldSpec('third blank field', (80, 120), BlankField, ()))
         super().__init__(line, field_specs, validators=None)
 
 
