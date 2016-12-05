@@ -1,7 +1,7 @@
 from collections import OrderedDict
 from component import Component
 from fields import FieldSpec, Field, BlankField, LiteralsField, JustifiedField, IntegerField, DateField, BSBField
-from fields import AccountField, AmountField
+from fields import AccountNumberField, AmountField
 from validators import Validator, Length, NotBlank, Integer, Literals
 
 
@@ -62,15 +62,22 @@ class DetailRecord(Record):
     def __init__(self, line):
         field_specs = (FieldSpec('record type', (0, 1), IntegerField, ()),
                        FieldSpec('bsb number', (1, 8), BSBField, ()),
-                       FieldSpec('account number', (8, 17), AccountField, ()),
+                       FieldSpec('account number', (8, 17), AccountNumberField, ()),
                        FieldSpec('indicator', (17, 18), LiteralsField, (), (' ', 'N', 'W', 'X', 'Y')),
                        FieldSpec('transaction code', (18, 20), LiteralsField, (),
                                  (('13', ) + tuple((str(i) for i in range(50, 58))))),
-                       FieldSpec('amount', (20, 30), AmountField, ()))
+                       FieldSpec('amount', (20, 30), AmountField, ()),
+                       FieldSpec('account name', (30, 62), JustifiedField, ()),
+                       FieldSpec('lodgement reference', (62, 80), JustifiedField, ()),
+                       FieldSpec('trace bsb number', (80, 87), BSBField, ()),
+                       FieldSpec('trace account number', (87, 96), AccountNumberField, ()))
         for spec in field_specs:
             start, end = spec.bounds
             substring = line[start:end]
             spec.validators += (Length(substring, end - start), )
+            if spec.name in ('account name', 'lodgement reference'):
+                # TODO: can lodgement reference be blank?  Need to double-check
+                spec.validators += (NotBlank(substring), )
 
         super().__init__(line, field_specs, validators=None)
 

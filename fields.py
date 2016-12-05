@@ -47,7 +47,7 @@ class BSBField(Field):
         self.validators += (BSB(string), )
 
 
-class AccountField(Field):
+class AccountNumberField(Field):
     def __init__(self, string, validators=None):
         super().__init__(string, validators=validators)
         self.validators += (NotLiterals(string, '0' * len(string)),
