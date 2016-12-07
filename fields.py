@@ -1,5 +1,6 @@
 from string import digits
 from component import Component
+from bounds import Bounds
 from validators import Blank, JustifiedString, Integer, Date, BSB, Literals, NotLiterals, Characters, IntegerNonZero
 
 
@@ -66,7 +67,7 @@ class FieldSpec:
         Holds the info needed to create a specific field.
 
         name: the display name of this field type
-        bounds: a pair denoting the starting and ending indexes to slice the field out of its line, i.e. [start, end)
+        bounds: a Bounds instance
         class_: the subclass of Field that should be used
         validators: a tuple of validators
         """
@@ -75,11 +76,6 @@ class FieldSpec:
         self.class_ = class_
         self.validators = validators
         self.args = args
-
-    @property
-    def display_bounds(self):
-        """The bounds as users expect them: a closed rather than half-open interval indexed from 1 rather than 0."""
-        return self.bounds[0] + 1, self.bounds[1]
 
     def field(self, string):
         """Create a field from this FieldSpec containing the given string."""
