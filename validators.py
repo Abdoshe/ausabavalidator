@@ -125,10 +125,13 @@ class IntegerNonZero(StringValidator):
     """Check that string does not evaluate to 0."""
     @property
     def errors(self):
+        errs = Integer(self.string).errors
+        if errs:
+            return errs
         if int(self.string) <= 0:
             return ("Expected non-zero integer but got '{}'".format(self.string), )
         return ()
-    
+
 
 
 class Date(StringValidator):
