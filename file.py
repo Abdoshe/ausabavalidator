@@ -1,5 +1,5 @@
 from component import Component
-from records import record_type, record_from_line, DescriptiveRecord
+from records import record_type, record_from_line, DescriptiveRecord, DetailRecord
 from validators import Validator
 
 
@@ -40,9 +40,33 @@ class ReelSequenceValidator(FileValidator):
         return ()
 
 
+class NetTotalValidator(FileValidator):
+    """Check that the total record's net total field does contain the net total for the file."""
+    @property
+    def errors(self):
+        calculated_total = 0
+        for line_num, record in enumerate(self.file.records):
+            if not isinstance(record, DetailRecord):
+                continue  # Only detail records contain transactions.  We'll check the total record at the end.
+            transaction_code = tuple(record.fields.values())[4].string
+            amount = int(tuple(record.fields.values())[5].string)
+            is_debit = transaction_code == '13'  # all other codes denote credits
+            if is_debit:
+                calculated_total -= amount
+            else:
+                calculated_total += amount
+        total_record = self.file.records[-1]
+        read_total = int(tuple(total_record.fields.values())[3].string)
+        if not calculated_total == read_total:
+            line_num = len(self.file.records) - 1
+            return ({'line': line_num,
+                    'error': 'Expected net total of {} but got {}'.format(calculated_total, read_total)}, )
+        return ()
+
+
 class File(Component):
     def __init__(self, lines, validators=None):
         validators = validators or ()
-        validators += (RecordsValidator(self), ReelSequenceValidator(self))
+        validators += (RecordsValidator(self), ReelSequenceValidator(self), NetTotalValidator(self))
         super().__init__(validators=validators)
         self.records = tuple((record_from_line(line) for line in lines))
