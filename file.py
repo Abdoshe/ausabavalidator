@@ -27,11 +27,13 @@ class ReelSequenceValidator(FileValidator):
         for line_num, record in enumerate(self.file.records):
             if not isinstance(record, DescriptiveRecord):
                 continue
-            record_type_string = tuple(record.fields.values())[2].string  # Will always be the third field.
+            reel_sequence_string = record.fields['reel sequence'].string
             try:
-                this_sequence_number = int(record_type_string)
+                this_sequence_number = int(reel_sequence_string)
             except ValueError:
-                return ()  # It will get picked up by the field validator which produces better error info.
+                error = 'Could not read one or more reel sequence numbers.  Expected an integer, got {}'\
+                        .format(reel_sequence_string)
+                return ({'line': line_num, 'error': error}, )
             if this_sequence_number != current_sequence_number + 1:
                 error = 'Reel sequence number out of order.  Expected {:02d}, got {:02d}'\
                     .format(current_sequence_number + 1, this_sequence_number)
@@ -44,6 +46,7 @@ class NetTotalValidator(FileValidator):
     """Check that the total record's net total field does contain the net total for the file."""
     @property
     def errors(self):
+        # First check that all
         calculated_total = 0
         for line_num, record in enumerate(self.file.records):
             if not isinstance(record, DetailRecord):

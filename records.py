@@ -15,8 +15,8 @@ class FieldsValidator(Validator):
 
     @property
     def errors(self):
-        return ({'pos': spec.bounds.display, 'field': spec.name, 'errors': field.errors}
-                for spec, field in self.record.fields.items() if field.errors)
+        return ({'pos': field.spec.bounds.display_tuple, 'field': field.spec.name, 'errors': field.errors}
+                for field in self.record.fields.values() if field.errors)
 
 
 class Record(Component):
@@ -31,7 +31,7 @@ class Record(Component):
         self.fields = OrderedDict()
         for spec in self.field_specs:
             start, end = spec.bounds
-            self.fields[spec] = spec.field(line[start:end])
+            self.fields[spec.name] = spec.field(line[start:end])
 
 
 class DescriptiveRecord(Record):
