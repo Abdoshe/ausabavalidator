@@ -24,11 +24,19 @@ class Bounds:
     def __iter__(self):
         return iter((self.start, self.end))
 
+    def __len__(self):
+        return self.end - self.start
+
     def __eq__(self, other):
+        if not isinstance(other, Bounds):
+            return NotImplemented
         return self.start == other.start and self.end == other.end
 
     def __ne__(self, other):
-        return not self.__eq__(other)
+        equal = self.__eq__(other)
+        if equal is NotImplemented:
+            return NotImplemented
+        return equal
 
     def __str__(self):
         return '<Bounds: {}>'.format(self.display_string)

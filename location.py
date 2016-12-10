@@ -3,7 +3,7 @@ from util import pluralise
 
 
 class Location:
-    """A line number and a range."""
+    """A line number and a bounds.Bounds."""
     def __init__(self, line_num, bounds):
         self.line_num = line_num
         # If bounds is a sequence, convert it to a Bounds.
@@ -12,10 +12,37 @@ class Location:
         self.bounds = bounds
 
     def __eq__(self, other):
+        if not isinstance(other, Location):
+            return NotImplemented
         return self.line_num == other.line_num and self.bounds == other.bounds
 
     def __ne__(self, other):
-        return not self.__eq__(other)
+        equal = self.__eq__(other)
+        if equal is NotImplemented:
+            return NotImplemented
+        return equal
+
+    def __lt__(self, other):
+        if not isinstance(other, Location):
+            return NotImplemented
+        if self.line_num < other.line_num:
+            return True
+        elif self.line_num > other.line_num:
+            return False
+        # line numbers are the same so check starting columns
+        if self.bounds.start < other.bounds.start:
+            return True
+        elif self.bounds.start > other.bounds.start:
+            return False
+        # line numbers and start columns are the same so check end columns
+        if self.bounds.end < other.bounds.end:
+            return True
+        return False
+
+    def __gt__(self, other):
+        if not isinstance(other, Location):
+            return NotImplemented
+        return self.__ne__(other) and not self.__lt__(other)
 
     def __str__(self):
         start, end = self.bounds.display_tuple
