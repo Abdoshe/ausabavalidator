@@ -4,7 +4,7 @@ from util import pluralise
 
 class Location:
     """A line number and a bounds.Bounds."""
-    def __init__(self, line_num, bounds):
+    def __init__(self, bounds, line_num=None):
         self.line_num = line_num
         # If bounds is a sequence, convert it to a Bounds.
         if not isinstance(bounds, Bounds):
