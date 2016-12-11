@@ -2,12 +2,14 @@ from util import pluralise
 
 
 class Bounds:
-    """A range."""
+    """A range that does not contain negative values."""
     def __init__(self, start, end):
         """
         start: inclusive
         end: exclusive
         """
+        if start < 0 or end < 0:
+            raise ValueError('start and end must be greater than zero, got {} and {}'.format(start, end))
         self.start = start
         self.end = end
 
@@ -19,7 +21,7 @@ class Bounds:
     @property
     def display_string(self):
         """self.display_tuple formatted for users."""
-        return pluralise(self.display_tuple, str(self.start), '{}-{}'.format(self.start, self.end))
+        return pluralise(self.display_tuple, str(self.display_tuple[0]), '{}-{}'.format(*self.display_tuple))
 
     def __iter__(self):
         return iter((self.start, self.end))
