@@ -58,7 +58,7 @@ class Bounds:
         equal = self.__eq__(other)
         if equal is NotImplemented:
             return NotImplemented
-        return equal
+        return not equal
 
     def __lt__(self, other):
         if not isinstance(other, Bounds):
@@ -138,3 +138,29 @@ class BoundsSet:
         tuple_str = str(tuple((bounds.display_string for bounds in sorted(self.set))))
         tuple_str_no_quotes = ''.join((ch for ch in tuple_str if ch != "'"))
         return '<BoundsSet: {}>'.format(tuple_str_no_quotes)
+
+    def __eq__(self, other):
+        if not isinstance(other, BoundsSet):
+            return NotImplemented
+        return self.set == other.set
+
+    def __ne__(self, other):
+        equal = self.__eq__(other)
+        if equal is NotImplemented:
+            return NotImplemented
+        return not equal
+
+    def __lt__(self, other):
+        if not isinstance(other, BoundsSet):
+            return NotImplemented
+        for a, b in zip(sorted(self.set), sorted(other.set)):
+            if a > b:
+                return False
+            if a < b:
+                return True
+        return False
+
+    def __gt__(self, other):
+        if not isinstance(other, BoundsSet):
+            return NotImplemented
+        return self.__ne__(other) and not self.__lt__(other)
